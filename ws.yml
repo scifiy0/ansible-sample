@@ -1,0 +1,8 @@
+---
+# this will ping, deploy nginx and start the service to nodes in inventory
+- name: Initer for nginx deployment
+  hosts: all
+  become: true
+  # remote_user: root
+  roles: 
+    - common
