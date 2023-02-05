@@ -1,0 +1,6 @@
+nodes:
+  hosts:
+    node1-centos: 
+      ansible_host: 
+    node2-ubuntu: 
+      ansible_host: 

@@ -1,0 +1,54 @@
+---
+
+# install nginx
+
+- name: Test connectivity
+  shell: ping -c 4 8.8.8.8
+  register: packet_status
+  ignore_errors: True
+  
+- name: Print Debug
+  debug: 
+    var: packet_status
+  # notify: 
+  when: packet_status.rc != 0
+
+- name: Copy Nginx to Debian/Ubuntu
+  copy:
+    src: files/ubuntu/nginx_1.21.2-1~focal_amd64.deb
+    dest: /tmp/
+  when: ansible_os_family == "Debian"
+
+- name: Copy Nginx to Redhat
+  copy:
+    src: files/redhat/nginx-1.21.4-1.el7.ngx.x86_64.rpm
+    dest: /tmp/
+  when: ansible_os_family == "RedHat"
+
+# install the package
+- name: Install nginx rpm from a local file
+  yum:
+    name: /tmp/nginx-1.21.4-1.el7.ngx.x86_64.rpm
+    state: present
+  notify: 
+    - enable nginx
+    - start nginx
+  when: ansible_os_family == "RedHat"
+
+- name: Install nginx deb from a local file
+  apt:
+    deb: /tmp/nginx_1.21.2-1~focal_amd64.deb
+  notify: 
+    - enable nginx
+    - start nginx
+  when: ansible_os_family == "Debian"
+
+- name: Getting Handler
+  debug:
+    msg: "Calling Handler"
+
+- name: Calling Handler
+  shell: echo "Calling Handler"
+  notify: 
+    - enable nginx
+    - start nginx
